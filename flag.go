@@ -5,16 +5,25 @@ import (
 	"errors"
 	"flag"
 	"reflect"
-	"strconv"
+	"time"
 
 	"github.com/unistack-org/micro/v3/config"
 	rutil "github.com/unistack-org/micro/v3/util/reflect"
 )
 
 var (
-	DefaultStructTag = "flag"
-	ErrInvalidStruct = errors.New("invalid struct specified")
+	DefaultStructTag  = "flag"
+	ErrInvalidValue   = errors.New("invalid value specified")
+	DefaultSliceDelim = ","
+	DefaultMapDelim   = ","
 )
+
+/*
+var (
+	timeTimeKind     = reflect.TypeOf(time.Time{}).Kind()
+	timeDurationKind = reflect.TypeOf(time.Duration(0)).Kind()
+)
+*/
 
 type flagConfig struct {
 	opts config.Options
@@ -41,15 +50,51 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 		}
 		fn, fv, fd := getFlagOpts(tf)
 
+		rcheck := true
+		switch sf.Value.Interface().(type) {
+		case time.Duration:
+			err = c.flagDuration(sf.Value, fn, fv, fd)
+			rcheck = false
+		case time.Time:
+			err = c.flagTime(sf.Value, fn, fv, fd)
+			rcheck = false
+		}
+		if err != nil {
+			return err
+		}
+
+		if !rcheck {
+			continue
+		}
+
+		if sf.Value.Kind() == reflect.Ptr {
+			sf.Value = sf.Value.Elem()
+		}
+
 		switch sf.Value.Kind() {
 		case reflect.String:
-			v := sf.Value.Addr().Interface().(*string)
-			flag.StringVar(v, fn, fv, fd)
+			err = c.flagString(sf.Value, fn, fv, fd)
 		case reflect.Bool:
-			v := sf.Value.Addr().Interface().(*bool)
-			i, _ := strconv.ParseBool(fv)
-			flag.BoolVar(v, fn, i, fd)
+			err = c.flagBool(sf.Value, fn, fv, fd)
+		case reflect.Int:
+			err = c.flagInt(sf.Value, fn, fv, fd)
+		case reflect.Int64:
+			err = c.flagInt64(sf.Value, fn, fv, fd)
+		case reflect.Float64:
+			err = c.flagFloat64(sf.Value, fn, fv, fd)
+		case reflect.Uint:
+			err = c.flagUint(sf.Value, fn, fv, fd)
+		case reflect.Uint64:
+			err = c.flagUint64(sf.Value, fn, fv, fd)
+		case reflect.Slice:
+			err = c.flagSlice(sf.Value, fn, fv, fd)
+		case reflect.Map:
+			err = c.flagMap(sf.Value, fn, fv, fd)
 		}
+		if err != nil {
+			return err
+		}
+
 	}
 
 	return nil
