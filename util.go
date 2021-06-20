@@ -8,6 +8,41 @@ import (
 	"time"
 )
 
+func convertType(v reflect.Value, t reflect.Kind) (reflect.Value, error) {
+	switch v.Kind() {
+	case reflect.String:
+		switch t {
+		case reflect.String:
+			return v, nil
+		case reflect.Int, reflect.Int64:
+			i, err := strconv.ParseInt(v.String(), 10, 64)
+			if err != nil {
+				return v, err
+			}
+			return reflect.ValueOf(i), nil
+		case reflect.Uint, reflect.Uint64:
+			i, err := strconv.ParseUint(v.String(), 10, 64)
+			if err != nil {
+				return v, err
+			}
+			return reflect.ValueOf(i), nil
+		case reflect.Float64:
+			i, err := strconv.ParseFloat(v.String(), 64)
+			if err != nil {
+				return v, err
+			}
+			return reflect.ValueOf(i), nil
+		case reflect.Bool:
+			i, err := strconv.ParseBool(v.String())
+			if err != nil {
+				return v, err
+			}
+			return reflect.ValueOf(i), nil
+		}
+	}
+	return v, ErrInvalidValue
+}
+
 func (c *flagConfig) flagSlice(v reflect.Value, fn, fv, fd string) error {
 	delim := DefaultSliceDelim
 	if c.opts.Context != nil {
@@ -64,6 +99,49 @@ func (c *flagConfig) flagSlice(v reflect.Value, fn, fv, fd string) error {
 }
 
 func (c *flagConfig) flagMap(v reflect.Value, fn, fv, fd string) error {
+	delim := DefaultMapDelim
+	if c.opts.Context != nil {
+		if d, ok := c.opts.Context.Value(mapDelimKey{}).(string); ok {
+			delim = d
+		}
+	}
+	flag.Func(fn, fd, func(s string) error {
+		ps := strings.Split(s, delim)
+		if len(ps) == 0 {
+			return nil
+		}
+		v.Set(reflect.MakeMapWithSize(v.Type(), len(ps)))
+		kt := v.Type().Key().Kind()
+		vt := v.Type().Elem().Kind()
+
+		for i := 0; i < len(ps); i++ {
+			fs := strings.Split(ps[i], "=")
+			switch len(fs) {
+			case 0:
+				return nil
+			case 1:
+				if len(fs[0]) == 0 {
+					return nil
+				}
+				return ErrInvalidValue
+			case 2:
+				break
+			default:
+				return ErrInvalidValue
+			}
+			key, err := convertType(reflect.ValueOf(fs[0]), kt)
+			if err != nil {
+				return err
+			}
+			val, err := convertType(reflect.ValueOf(fs[1]), vt)
+			if err != nil {
+				return err
+			}
+			v.SetMapIndex(key.Convert(v.Type().Key()), val.Convert(v.Type().Elem()))
+		}
+		return nil
+	})
+
 	return nil
 }
 
