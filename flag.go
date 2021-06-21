@@ -100,12 +100,15 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 	return nil
 }
 
-func (c *flagConfig) Load(ctx context.Context) error {
+func (c *flagConfig) Load(ctx context.Context, opts ...config.LoadOption) error {
+	options := config.NewLoadOptions(opts...)
+	_ = options
+	// TODO: allow merge, append and so
 	flag.Parse()
 	return nil
 }
 
-func (c *flagConfig) Save(ctx context.Context) error {
+func (c *flagConfig) Save(ctx context.Context, opts ...config.SaveOption) error {
 	return nil
 }
 
