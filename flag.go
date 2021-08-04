@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"flag"
+	"fmt"
 	"reflect"
 	"time"
 
@@ -118,6 +119,10 @@ func (c *flagConfig) String() string {
 
 func (c *flagConfig) Name() string {
 	return c.opts.Name
+}
+
+func (c *flagConfig) Watch(ctx context.Context, opts ...config.WatchOption) (config.Watcher, error) {
+	return nil, fmt.Errorf("not implemented")
 }
 
 func NewConfig(opts ...config.Option) config.Config {
