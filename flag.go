@@ -61,7 +61,11 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 			rcheck = false
 		}
 		if err != nil {
-			return err
+			c.opts.Logger.Errorf(c.opts.Context, "flag init error: %v", err)
+			if !c.opts.AllowFail {
+				return err
+			}
+			return nil
 		}
 
 		if !rcheck {
@@ -93,9 +97,12 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 			err = c.flagMap(sf.Value, fn, fv, fd)
 		}
 		if err != nil {
-			return err
+			c.opts.Logger.Errorf(c.opts.Context, "flag init error: %v", err)
+			if !c.opts.AllowFail {
+				return err
+			}
+			return nil
 		}
-
 	}
 
 	return nil
