@@ -1,4 +1,4 @@
-package flag
+package flag // import "go.unistack.org/micro-config-flag/v3"
 
 import (
 	"context"
@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"time"
 
-	"github.com/unistack-org/micro/v3/config"
-	rutil "github.com/unistack-org/micro/v3/util/reflect"
+	"go.unistack.org/micro/v3/config"
+	rutil "go.unistack.org/micro/v3/util/reflect"
 )
 
 var (

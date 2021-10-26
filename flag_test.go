@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/unistack-org/micro/v3/config"
+	"go.unistack.org/micro/v3/config"
 )
 
 func TestLoad(t *testing.T) {
