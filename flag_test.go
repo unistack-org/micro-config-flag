@@ -30,11 +30,11 @@ func TestLoad(t *testing.T) {
 
 	c := NewConfig(config.Struct(cfg), TimeFormat(time.RFC822))
 	if err := c.Init(); err != nil {
-		t.Fatal(err)
+		t.Fatalf("init failed: %v", err)
 	}
 
 	if err := c.Load(ctx); err != nil {
-		t.Fatal(err)
+		t.Fatalf("load failed: %v", err)
 	}
 
 	if cfg.Broker != "5566:33" {
@@ -43,6 +43,4 @@ func TestLoad(t *testing.T) {
 	if tf := cfg.Time.Format(time.RFC822); tf != "02 Jan 06 14:32 MSK" {
 		t.Fatalf("parse time error: %v", cfg.Time)
 	}
-
-	t.Logf("cfg %#+v", cfg)
 }

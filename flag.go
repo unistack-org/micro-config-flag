@@ -52,6 +52,7 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 		fn, fv, fd := getFlagOpts(tf)
 
 		rcheck := true
+
 		switch sf.Value.Interface().(type) {
 		case time.Duration:
 			err = c.flagDuration(sf.Value, fn, fv, fd)
@@ -60,6 +61,7 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 			err = c.flagTime(sf.Value, fn, fv, fd)
 			rcheck = false
 		}
+
 		if err != nil {
 			c.opts.Logger.Errorf(c.opts.Context, "flag init error: %v", err)
 			if !c.opts.AllowFail {
