@@ -10,6 +10,7 @@ import (
 )
 
 func TestLoad(t *testing.T) {
+	time.Local = time.UTC
 	os.Args = append(os.Args, "-broker", "5566:33")
 	os.Args = append(os.Args, "-verbose")
 	os.Args = append(os.Args, "-wait", "5s")
@@ -40,7 +41,7 @@ func TestLoad(t *testing.T) {
 	if cfg.Broker != "5566:33" {
 		t.Fatalf("failed to parse flags broker value invalid: %#+v", cfg)
 	}
-	if tf := cfg.Time.Format(time.RFC822); tf != "02 Jan 06 14:32 MSK" {
-		t.Fatalf("parse time error: %v", cfg.Time)
+	if tf := cfg.Time.Format(time.RFC822); tf != "02 Jan 06 15:04 MST" {
+		t.Fatalf("parse time error: %s != %s", tf, "02 Jan 06 15:04 MST")
 	}
 }
