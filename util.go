@@ -105,7 +105,7 @@ func (c *flagConfig) flagMap(v reflect.Value, fn, fv, fd string) error {
 			delim = d
 		}
 	}
-	flag.Func(fn, fd, func(s string) error {
+	flag.Func(fn, fv, func(s string) error {
 		ps := strings.Split(s, delim)
 		if len(ps) == 0 {
 			return nil
@@ -172,7 +172,7 @@ func (c *flagConfig) flagDuration(v reflect.Value, fn, fv, fd string) error {
 	if !ok {
 		return ErrInvalidValue
 	}
-	i, err := time.ParseDuration(fd)
+	i, err := time.ParseDuration(fv)
 	if err != nil {
 		return err
 	}
@@ -185,7 +185,7 @@ func (c *flagConfig) flagBool(v reflect.Value, fn, fv, fd string) error {
 	if !ok {
 		return ErrInvalidValue
 	}
-	i, err := strconv.ParseBool(fd)
+	i, err := strconv.ParseBool(fv)
 	if err != nil {
 		return err
 	}
@@ -207,11 +207,11 @@ func (c *flagConfig) flagInt(v reflect.Value, fn, fv, fd string) error {
 	if !ok {
 		return ErrInvalidValue
 	}
-	i, err := strconv.ParseInt(fd, 10, 64)
+	i, err := strconv.ParseInt(fv, 10, 64)
 	if err != nil {
 		return err
 	}
-	flag.IntVar(nv, fn, int(i), fd)
+	flag.IntVar(nv, fn, int(i), fv)
 	return nil
 }
 
@@ -220,11 +220,11 @@ func (c *flagConfig) flagInt64(v reflect.Value, fn, fv, fd string) error {
 	if !ok {
 		return ErrInvalidValue
 	}
-	i, err := strconv.ParseInt(fd, 10, 64)
+	i, err := strconv.ParseInt(fv, 10, 64)
 	if err != nil {
 		return err
 	}
-	flag.Int64Var(nv, fn, int64(i), fd)
+	flag.Int64Var(nv, fn, int64(i), fv)
 	return nil
 }
 
@@ -233,11 +233,11 @@ func (c *flagConfig) flagUint(v reflect.Value, fn, fv, fd string) error {
 	if !ok {
 		return ErrInvalidValue
 	}
-	i, err := strconv.ParseUint(fd, 10, 64)
+	i, err := strconv.ParseUint(fv, 10, 64)
 	if err != nil {
 		return err
 	}
-	flag.UintVar(nv, fn, uint(i), fd)
+	flag.UintVar(nv, fn, uint(i), fv)
 	return nil
 }
 
@@ -246,11 +246,11 @@ func (c *flagConfig) flagUint64(v reflect.Value, fn, fv, fd string) error {
 	if !ok {
 		return ErrInvalidValue
 	}
-	i, err := strconv.ParseUint(fd, 10, 64)
+	i, err := strconv.ParseUint(fv, 10, 64)
 	if err != nil {
 		return err
 	}
-	flag.Uint64Var(nv, fn, uint64(i), fd)
+	flag.Uint64Var(nv, fn, uint64(i), fv)
 	return nil
 }
 
@@ -259,11 +259,11 @@ func (c *flagConfig) flagFloat64(v reflect.Value, fn, fv, fd string) error {
 	if !ok {
 		return ErrInvalidValue
 	}
-	i, err := strconv.ParseFloat(fd, 64)
+	i, err := strconv.ParseFloat(fv, 64)
 	if err != nil {
 		return err
 	}
-	flag.Float64Var(nv, fn, float64(i), fd)
+	flag.Float64Var(nv, fn, float64(i), fv)
 	return nil
 }
 
@@ -295,7 +295,11 @@ func getFlagOpts(tf string) (string, string, string) {
 		}
 		ret[f] = p[1]
 	}
+
 	for idx := range ret {
+		if len(ret[idx]) == 0 {
+			continue
+		}
 		if ret[idx][0] == '\'' {
 			ret[idx] = ret[idx][1:]
 		}

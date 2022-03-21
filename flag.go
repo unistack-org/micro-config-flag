@@ -49,7 +49,7 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 		if !ok {
 			continue
 		}
-		fn, fv, fd := getFlagOpts(tf)
+		fn, fd, fv := getFlagOpts(tf)
 
 		rcheck := true
 
