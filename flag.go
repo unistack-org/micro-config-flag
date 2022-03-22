@@ -53,7 +53,15 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 
 		rcheck := true
 
-		switch sf.Value.Interface().(type) {
+		if !sf.Value.IsValid() {
+			continue
+		}
+		vi := sf.Value.Interface()
+		if vi == nil {
+			continue
+		}
+
+		switch vi.(type) {
 		case time.Duration:
 			err = c.flagDuration(sf.Value, fn, fv, fd)
 			rcheck = false
