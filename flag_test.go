@@ -43,6 +43,11 @@ func TestLoad(t *testing.T) {
 		t.Fatalf("init failed: %v", err)
 	}
 
+	// double init test
+	if err := c.Init(); err != nil {
+		t.Fatalf("init failed: %v", err)
+	}
+
 	if err := c.Load(ctx); err != nil {
 		t.Fatalf("load failed: %v", err)
 	}

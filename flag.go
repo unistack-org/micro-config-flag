@@ -60,7 +60,9 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 		if vi == nil {
 			continue
 		}
-
+		if f := flag.Lookup(fn); f != nil {
+			return nil
+		}
 		switch vi.(type) {
 		case time.Duration:
 			err = c.flagDuration(sf.Value, fn, fv, fd)
