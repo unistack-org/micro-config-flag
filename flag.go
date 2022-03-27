@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"os"
 	"reflect"
 	"time"
 
@@ -44,6 +45,7 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 		return err
 	}
 
+	flag.CommandLine.Init(os.Args[0], flag.ContinueOnError)
 	for _, sf := range fields {
 		tf, ok := sf.Field.Tag.Lookup(c.opts.StructTag)
 		if !ok {
