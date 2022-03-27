@@ -10,9 +10,9 @@ import (
 )
 
 type mapValue struct {
-	v     reflect.Value
 	delim string
 	def   string
+	v     reflect.Value
 }
 
 func (v mapValue) String() string {
@@ -67,9 +67,9 @@ func (v mapValue) Set(s string) error {
 }
 
 type sliceValue struct {
-	v     reflect.Value
 	delim string
 	def   string
+	v     reflect.Value
 }
 
 func (v sliceValue) String() string {
