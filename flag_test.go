@@ -2,6 +2,7 @@ package flag
 
 import (
 	"context"
+	"flag"
 	"os"
 	"testing"
 	"time"
@@ -40,7 +41,7 @@ func TestLoad(t *testing.T) {
 	ctx := context.Background()
 	cfg := &Config{Nested: &NestedConfig{}}
 
-	c := NewConfig(config.Struct(cfg), TimeFormat(time.RFC822))
+	c := NewConfig(config.Struct(cfg), TimeFormat(time.RFC822), FlagErrorHandling(flag.ContinueOnError))
 	if err := c.Init(); err != nil {
 		t.Fatalf("init failed: %v", err)
 	}

@@ -28,6 +28,7 @@ var (
 */
 
 type flagConfig struct {
+	fset *flag.FlagSet
 	opts config.Options
 }
 
@@ -45,7 +46,7 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 		return err
 	}
 
-	flag.CommandLine.Init(os.Args[0], flag.ContinueOnError)
+	// flag.CommandLine.Init(os.Args[0], flag.ContinueOnError)
 	for _, sf := range fields {
 		tf, ok := sf.Field.Tag.Lookup(c.opts.StructTag)
 		if !ok {
@@ -65,6 +66,8 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 		if f := flag.Lookup(fn); f != nil {
 			return nil
 		}
+
+		fmt.Printf("register %s flag\n", fn)
 		switch vi.(type) {
 		case time.Duration:
 			err = c.flagDuration(sf.Value, fn, fv, fd)
@@ -151,5 +154,37 @@ func NewConfig(opts ...config.Option) config.Config {
 	if len(options.StructTag) == 0 {
 		options.StructTag = DefaultStructTag
 	}
-	return &flagConfig{opts: options}
+	flagSet := flag.CommandLine
+	flagSetName := os.Args[0]
+	flagSetErrorHandling := flag.ExitOnError
+	var flagUsage func()
+	var isSet bool
+
+	if options.Context != nil {
+		if v, ok := options.Context.Value(flagSetNameKey{}).(string); ok {
+			isSet = true
+			flagSetName = v
+		}
+		if v, ok := options.Context.Value(flagSetErrorHandlingKey{}).(flag.ErrorHandling); ok {
+			isSet = true
+			flagSetErrorHandling = v
+		}
+		if v, ok := options.Context.Value(flagSetKey{}).(*flag.FlagSet); ok {
+			flagSet = v
+		}
+		if v, ok := options.Context.Value(flagSetUsageKey{}).(func()); ok {
+			flagUsage = v
+		}
+	}
+
+	if isSet {
+		flagSet.Init(flagSetName, flagSetErrorHandling)
+	}
+	if flagUsage != nil {
+		flagSet.Usage = flagUsage
+	}
+
+	c := &flagConfig{opts: options, fset: flagSet}
+
+	return c
 }
