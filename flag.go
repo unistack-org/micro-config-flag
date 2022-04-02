@@ -214,7 +214,7 @@ func (c *flagConfig) usage() {
 		}
 		b.WriteString(strings.ReplaceAll(usage, "\n", "\n    \t"))
 
-		if rutil.IsZero(f.Value) || f.Value.String() == f.DefValue {
+		if f.Value.String() == f.DefValue {
 			fmt.Fprintf(&b, " (default %q)", f.DefValue)
 		} else {
 			fmt.Fprintf(&b, " (default %q current %q)", f.DefValue, f.Value)
