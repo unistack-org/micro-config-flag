@@ -15,7 +15,7 @@ type mapValue struct {
 	v     reflect.Value
 }
 
-func (v mapValue) String() string {
+func (v *mapValue) String() string {
 	if v.v.Kind() != reflect.Invalid {
 		var kv []string
 		it := v.v.MapRange()
@@ -29,7 +29,11 @@ func (v mapValue) String() string {
 	return v.def
 }
 
-func (v mapValue) Set(s string) error {
+func (v *mapValue) Get() interface{} {
+return v.v.Interface()
+}
+
+func (v *mapValue) Set(s string) error {
 	ps := strings.Split(s, v.delim)
 	if len(ps) == 0 {
 		return nil
@@ -72,7 +76,7 @@ type sliceValue struct {
 	v     reflect.Value
 }
 
-func (v sliceValue) String() string {
+func (v *sliceValue) String() string {
 	if v.v.Kind() != reflect.Invalid {
 		var kv []string
 		for idx := 0; idx < v.v.Len(); idx++ {
@@ -83,7 +87,12 @@ func (v sliceValue) String() string {
 	return v.def
 }
 
-func (v sliceValue) Set(s string) error {
+
+func (v *sliceValue) Get() interface{} {
+	return v.v.Interface()
+	}
+
+func (v *sliceValue) Set(s string) error {
 	p := strings.Split(s, v.delim)
 	v.v.Set(reflect.MakeSlice(v.v.Type(), len(p), len(p)))
 	switch v.v.Type().Elem().Kind() {
@@ -397,4 +406,20 @@ func getFlagOpts(tf string) (string, string, string) {
 		}
 	}
 	return name, desc, def
+}
+
+
+
+func isZeroValue(f *flag.Flag, value string) bool {
+	// Build a zero value of the flag's Value type, and see if the
+	// result of calling its String method equals the value passed in.
+	// This works unless the Value type is itself an interface type.
+	typ := reflect.TypeOf(f.Value)
+	var z reflect.Value
+	if typ.Kind() == reflect.Pointer {
+		z = reflect.New(typ.Elem())
+	} else {
+		z = reflect.Zero(typ)
+	}
+	return value == z.Interface().(flag.Value).String()
 }

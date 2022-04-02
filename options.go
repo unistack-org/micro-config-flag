@@ -54,3 +54,11 @@ type flagSetUsageKey struct{}
 func FlagUsage(fn func()) config.Option {
 	return config.SetOption(flagSetUsageKey{}, fn)
 }
+
+
+type flagEnvKey struct{}
+
+// FlagEnv set flag set usage func
+func FlagEnv(n string) config.Option {
+	return config.SetOption(flagEnvKey{}, n)
+}
