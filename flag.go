@@ -43,11 +43,24 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 	for _, o := range opts {
 		o(&c.opts)
 	}
+
+	if err := config.DefaultBeforeInit(c.opts.Context, c); err != nil && !c.opts.AllowFail {
+		return err
+	}
+
 	c.configure()
 
 	fields, err := rutil.StructFields(c.opts.Struct)
 	if err != nil {
-		return err
+		if !c.opts.AllowFail {
+			return err
+		}
+
+		if err := config.DefaultAfterInit(c.opts.Context, c); err != nil && !c.opts.AllowFail {
+			return err
+		}
+
+		return nil
 	}
 
 	for _, sf := range fields {
@@ -84,10 +97,13 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 		}
 
 		if err != nil {
-			c.opts.Logger.Errorf(c.opts.Context, "flag init error: %v", err)
 			if !c.opts.AllowFail {
 				return err
 			}
+			if err := config.DefaultAfterInit(c.opts.Context, c); err != nil && !c.opts.AllowFail {
+				return err
+			}
+
 			return nil
 		}
 
@@ -120,12 +136,20 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 			err = c.flagMap(sf.Value, fn, fv, fd)
 		}
 		if err != nil {
-			c.opts.Logger.Errorf(c.opts.Context, "flag init error: %v", err)
 			if !c.opts.AllowFail {
 				return err
 			}
+
+			if err := config.DefaultAfterInit(c.opts.Context, c); err != nil && !c.opts.AllowFail {
+				return err
+			}
+
 			return nil
 		}
+	}
+
+	if err := config.DefaultAfterInit(c.opts.Context, c); err != nil && !c.opts.AllowFail {
+		return err
 	}
 
 	return nil
@@ -134,12 +158,30 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 func (c *flagConfig) Load(ctx context.Context, opts ...config.LoadOption) error {
 	options := config.NewLoadOptions(opts...)
 	_ = options
+
+	if err := config.DefaultBeforeLoad(ctx, c); err != nil && !c.opts.AllowFail {
+		return err
+	}
+
+	if err := config.DefaultAfterLoad(ctx, c); err != nil && !c.opts.AllowFail {
+		return err
+	}
+
 	// TODO: allow merge, append and so
 	flag.Parse()
+
 	return nil
 }
 
 func (c *flagConfig) Save(ctx context.Context, opts ...config.SaveOption) error {
+	if err := config.DefaultBeforeSave(ctx, c); err != nil && !c.opts.AllowFail {
+		return err
+	}
+
+	if err := config.DefaultAfterSave(ctx, c); err != nil && !c.opts.AllowFail {
+		return err
+	}
+
 	return nil
 }
 
