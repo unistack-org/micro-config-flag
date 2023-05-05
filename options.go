@@ -1,6 +1,8 @@
 package flag
 
 import (
+	"flag"
+
 	"go.unistack.org/micro/v3/config"
 )
 
@@ -23,4 +25,40 @@ type timeFormatKey struct{}
 // TimeFormat set the time format
 func TimeFormat(s string) config.Option {
 	return config.SetOption(timeFormatKey{}, s)
+}
+
+type flagSetKey struct{}
+
+// FlagSet set flag set name
+func FlagSet(f *flag.FlagSet) config.Option {
+	return config.SetOption(flagSetKey{}, f)
+}
+
+type flagSetNameKey struct{}
+
+// FlagSetName set flag set name
+func FlagSetName(n string) config.Option {
+	return config.SetOption(flagSetNameKey{}, n)
+}
+
+type flagSetErrorHandlingKey struct{}
+
+// FlagErrorHandling set flag set error handling
+func FlagErrorHandling(eh flag.ErrorHandling) config.Option {
+	return config.SetOption(flagSetErrorHandlingKey{}, eh)
+}
+
+type flagSetUsageKey struct{}
+
+// FlagUsage set flag set usage func
+func FlagUsage(fn func()) config.Option {
+	return config.SetOption(flagSetUsageKey{}, fn)
+}
+
+
+type flagEnvKey struct{}
+
+// FlagEnv set flag set usage func
+func FlagEnv(n string) config.Option {
+	return config.SetOption(flagEnvKey{}, n)
 }
