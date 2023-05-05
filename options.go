@@ -3,7 +3,7 @@ package flag
 import (
 	"flag"
 
-	"go.unistack.org/micro/v3/config"
+	"go.unistack.org/micro/v4/config"
 )
 
 type sliceDelimKey struct{}
@@ -54,7 +54,6 @@ type flagSetUsageKey struct{}
 func FlagUsage(fn func()) config.Option {
 	return config.SetOption(flagSetUsageKey{}, fn)
 }
-
 
 type flagEnvKey struct{}
 
