@@ -1,4 +1,4 @@
-module go.unistack.org/micro-config-flag/v3
+module go.unistack.org/micro-config-flag/v4
 
 go 1.18
 
