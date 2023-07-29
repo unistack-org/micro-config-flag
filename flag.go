@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"go.unistack.org/micro/v4/config"
+	"go.unistack.org/micro/v4/options"
 	rutil "go.unistack.org/micro/v4/util/reflect"
 )
 
@@ -39,7 +40,7 @@ func (c *flagConfig) Options() config.Options {
 	return c.opts
 }
 
-func (c *flagConfig) Init(opts ...config.Option) error {
+func (c *flagConfig) Init(opts ...options.Option) error {
 	for _, o := range opts {
 		o(&c.opts)
 	}
@@ -155,7 +156,7 @@ func (c *flagConfig) Init(opts ...config.Option) error {
 	return nil
 }
 
-func (c *flagConfig) Load(ctx context.Context, opts ...config.LoadOption) error {
+func (c *flagConfig) Load(ctx context.Context, opts ...options.Option) error {
 	options := config.NewLoadOptions(opts...)
 	_ = options
 
@@ -173,7 +174,7 @@ func (c *flagConfig) Load(ctx context.Context, opts ...config.LoadOption) error 
 	return nil
 }
 
-func (c *flagConfig) Save(ctx context.Context, opts ...config.SaveOption) error {
+func (c *flagConfig) Save(ctx context.Context, opts ...options.Option) error {
 	if err := config.DefaultBeforeSave(ctx, c); err != nil && !c.opts.AllowFail {
 		return err
 	}
@@ -193,7 +194,7 @@ func (c *flagConfig) Name() string {
 	return c.opts.Name
 }
 
-func (c *flagConfig) Watch(ctx context.Context, opts ...config.WatchOption) (config.Watcher, error) {
+func (c *flagConfig) Watch(ctx context.Context, opts ...options.Option) (config.Watcher, error) {
 	return nil, fmt.Errorf("not implemented")
 }
 
@@ -308,7 +309,7 @@ func (c *flagConfig) configure() {
 	c.name = flagSetName
 }
 
-func NewConfig(opts ...config.Option) config.Config {
+func NewConfig(opts ...options.Option) config.Config {
 	options := config.NewOptions(opts...)
 	if len(options.StructTag) == 0 {
 		options.StructTag = DefaultStructTag
