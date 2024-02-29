@@ -2,7 +2,7 @@ module go.unistack.org/micro-config-flag/v3
 
 go 1.18
 
-require go.unistack.org/micro/v3 v3.10.39
+require go.unistack.org/micro/v3 v3.10.40
 
 require (
 	github.com/google/uuid v1.3.0 // indirect
