@@ -1,4 +1,4 @@
-package flag // import "go.unistack.org/micro-config-flag/v3"
+package flag
 
 import (
 	"context"
