@@ -41,8 +41,12 @@ func (c *flagConfig) Options() config.Options {
 }
 
 func (c *flagConfig) Init(opts ...options.Option) error {
+	var err error
+
 	for _, o := range opts {
-		o(&c.opts)
+		if err = o(&c.opts); err != nil {
+			return err
+		}
 	}
 
 	if err := config.DefaultBeforeInit(c.opts.Context, c); err != nil && !c.opts.AllowFail {
