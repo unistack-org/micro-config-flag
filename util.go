@@ -325,6 +325,7 @@ func (c *flagConfig) flagFloat64(v reflect.Value, fn, fv, fd string) error {
 	return nil
 }
 
+/*
 func (c *flagConfig) flagStringSlice(v reflect.Value, fn, fv, fd string) error {
 	nv, ok := v.Addr().Interface().(*string)
 	if !ok {
@@ -333,6 +334,7 @@ func (c *flagConfig) flagStringSlice(v reflect.Value, fn, fv, fd string) error {
 	flag.StringVar(nv, fn, fv, fd)
 	return nil
 }
+*/
 
 func getFlagOpts(tf string) (string, string, string) {
 	var name, desc, def string
