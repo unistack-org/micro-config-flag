@@ -3,7 +3,7 @@ package flag
 import (
 	"flag"
 
-	"go.unistack.org/micro/v4/config"
+	"go.unistack.org/micro/v5/config"
 )
 
 type sliceDelimKey struct{}
